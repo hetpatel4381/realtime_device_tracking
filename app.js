@@ -16,8 +16,13 @@ app.use(express.static(path.join(__dirname, "public"))); // Corrected to app.use
 
 io.on("connection", (socket) => {
   console.log("connected");
+  socket.on("send-location", function (data) {
+    const { latitude, longitude } = data;
+    io.emit("receive-location", { id: socket.id, latitude, longitude });
+  });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", function () {
+    io.emit("user-disconnected", socket.id);
     console.log("user disconnected");
   });
 });
