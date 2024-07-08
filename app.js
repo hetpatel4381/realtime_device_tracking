@@ -12,25 +12,21 @@ const server = http.createServer(app);
 const io = new socketio(server);
 
 app.set("view engine", "ejs");
-app.set(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"))); // Corrected to app.use
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("connected");
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
-
-  // Example of receiving a message from a client
-  socket.on("message", (msg) => {
-    console.log("message received:", msg);
-    // Broadcast the message to all connected clients
-    io.emit("message", msg);
-  });
 });
 
-app.get("/", function (req, res) {
-  res.send("Hello World!");
+app.get("/", (req, res) => {
+  res.render("index");
 });
 
-server.listen(3000);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
